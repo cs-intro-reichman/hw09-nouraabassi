@@ -39,12 +39,58 @@ public class LanguageModel {
     // Computes and sets the probabilities (p and cp fields) of all the
 	// characters in the given list. */
 	public void calculateProbabilities(List probs) {				
-		// Your code goes here
+        
+        ListIterator itr = probs.listIterator(0);
+        int sum = 0;
+        int i = 0;
+
+        while(itr.hasNext()){
+
+            itr.next();
+            sum += probs.get(i).count;
+            i++;
+
+        }
+
+        ListIterator itr1 = probs.listIterator(0);
+        i = 0;
+
+        while(itr1.hasNext()){
+
+            probs.get(i).p = (double) probs.get(i).count/sum;
+            itr1.next();
+            i++;
+
+        }
+
+        ListIterator itr2 = probs.listIterator(0);
+        i = 0;
+
+        while(itr2.hasNext()){
+
+            if(i == 0) probs.get(i).cp = probs.get(i).p;
+            else {
+
+                int j = 0;
+
+                while(j <= i){
+
+                    probs.get(i).cp += probs.get(j).p;
+                    j++;
+                }
+
+            }
+
+            i++;
+            itr2.next();
+        }
+
+
 	}
 
     // Returns a random character from the given probabilities list.
 	public char getRandomChar(List probs) {
-		// Your code goes here
+		return 'g';
 	}
 
     /**
@@ -55,8 +101,9 @@ public class LanguageModel {
 	 * @return the generated text
 	 */
 	public String generate(String initialText, int textLength) {
-		// Your code goes here
-	}
+
+        return " ";
+    }
 
     /** Returns a string representing the map of this language model. */
 	public String toString() {
@@ -69,6 +116,31 @@ public class LanguageModel {
 	}
 
     public static void main(String[] args) {
-		// Your code goes here
+
+        LanguageModel lm1 = new LanguageModel(0);
+        List list1 = new List();
+
+        list1.addFirst(' ');
+        list1.addFirst('e');
+        list1.update('e');
+        list1.addFirst('t');
+        list1.update('t');
+        list1.addFirst('i'); 
+        list1.addFirst('m');
+        list1.update('m');
+        list1.addFirst('o');
+        list1.addFirst('c');
+
+        lm1.calculateProbabilities(list1);
+
+        System.out.println(list1.toString());
+
+
+
+
+
+       
+
+
     }
 }
