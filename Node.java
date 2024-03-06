@@ -20,7 +20,6 @@ public class Node {
     public Node(CharData cp) {
        this(cp, null);
     }
- 
     /** Textual representation of this node. */
     public String toString() {
        return "" + cp;
