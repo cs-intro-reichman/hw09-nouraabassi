@@ -1,261 +1,176 @@
-import java.util.Arrays;
-import java.util.LinkedList;
+/**
+ * A linked list of character data objects.
+ * (Actually, a list of Node objects, each holding a reference to a character data object.
+ * However, users of this class are not aware of the Node objects. As far as they are concerned,
+ * the class represents a list of CharData objects. Likwise, the API of the class doess not
+ * mention the existence of the Node objects).
+ */
+public class List {
 
-public class ListTest {
-    public static void main(String[] args) {
-        String methodName = "update";
-        boolean result = false;
-        switch (methodName) {
-            case "addFirst":
-                result = testAddFirst();
-                break;
-            case "toString":
-                result = testToString();
-                break;
-            case "indexOf":
-                result = testIndexOf();
-                break;  
-            case "get":
-                result = testGet();
-                break;
-            case "update":
-                result = testUpdate();
-                break;
-            case "remove":
-                result = testRemove();
-                break;
-            
-            case "all":
-                result = testAddFirst();
-                result = result && testToString();
-                result = result && testIndexOf();
-                result = result && testGet();
-                result = result && testUpdate();
-                result = result && testRemove();
-                break; 
-            default:
-                break;
-        }
-        System.out.println("Test " + methodName + " result: " + (result ? "PASSED" : "FAILED"));
+    // Points to the first node in this listt
+    private Node first;
+
+    // The number of elements in this list
+    private int size;
+
+    /**
+     * Constructs an empty list.
+     */
+    public List() {
+        first = null;
+        size = 0;
     }
 
-    public static boolean testAddFirst() {
-        boolean result = true;
-        String [] testWords = {"word","first","buzz"};
-        for (int i = 0; i < testWords.length; i++) {
-            result = result && testAddFirst(testWords[i]);
-        }
-        if (!result){
-            System.out.println("AddFirst Test failed");
-        }
-        return result;
+    /**
+     * Returns the number of elements in this list.
+     */
+    public int getSize() {
+        return size;
     }
-    private static boolean testAddFirst (String word) {
-        boolean result = true;
-        LinkedList<CharData> solution = new LinkedList<CharData>();
-        List yourSolution = new List();
-        for (int i = 0; i < word.length() ; i++) {
-            
-            solution.addFirst(new CharData(word.charAt(i)));
-            yourSolution.addFirst(word.charAt(i));
-            boolean res = testAddFirstCase(solution,yourSolution);
-            if (!res){
-                System.out.println("Word: " + word + ", Char: " + word.charAt(i) + ", Index: " + i);
-                System.out.println("Expected: size:" + solution.size() + ", first: " + solution.getFirst());
-                System.out.println("Actual: " + yourSolution.getSize() + ", first: " + yourSolution.getFirst().chr);
+
+    /**
+     * Returns the first element in the list
+     */
+    public CharData getFirst() {
+        return first.cp;
+    }
+
+    /**
+     * GIVE Adds a CharData object with the given character to the beginning of this list.
+     */
+    public void addFirst(char chr) {
+        CharData charData = new CharData(chr);
+        Node firstNode = new Node(charData, this.first);
+        this.first = firstNode;
+        size++;
+    }
+
+    /**
+     * GIVE Textual representation of this list.
+     */
+    public String toString() {
+        if (size == 0) return "()";
+
+        String str = "(";
+        Node current = first;
+
+        while (current != null) {
+            str += current.cp.toString() + " ";
+            current = current.next;
+        }
+
+        return str.substring(0, str.length() - 1) + ")";
+    }
+
+    /**
+     * Returns the index of the first CharData object in this list
+     * that has the same chr value as the given char,
+     * or -1 if there is no such object in this list.
+     */
+    public int indexOf(char chr) {
+        Node current = first;
+        int index = 0;
+
+        while (current != null) {
+            if (current.cp.chr == chr) {
+                return index;
             }
-            result = result && res;
+            current = current.next;
+            index++;
         }
-        if (!result){
-            System.out.println("AddFirst for word: " + word + " Test failed");
-        }
-        return result;
-        
-    }
-    private static boolean testAddFirstCase (LinkedList<CharData> solution, List yourSolution) {
-        return solution.size() == yourSolution.getSize() && solution.get(0).equals(yourSolution.getFirst().chr);
-    }
-    public static boolean testToString() {
-        boolean result = true;
-        String [] testWords = {"word","first","list"};
-        String [] solutions = {
-            "((w 1 0.0 0.0) (o 1 0.0 0.0) (r 1 0.0 0.0) (d 1 0.0 0.0))",
-            "((f 1 0.0 0.0) (i 1 0.0 0.0) (r 1 0.0 0.0) (s 1 0.0 0.0) (t 1 0.0 0.0))",
-            "((l 1 0.0 0.0) (i 1 0.0 0.0) (s 1 0.0 0.0) (t 1 0.0 0.0))"
-        };
-        for (int i = 0; i < testWords.length; i++) {
-            result = result && testToString(testWords[i],solutions[i]);
-        }
-        if (!result){
-            System.out.println("ToString Test failed");
-        }
-        return result;
-    }
-    
-    private static boolean testToString (String word, String solution) {
-        List yourSolution = new List();
-        for (int i = 0; i < word.length(); i++) {
-            yourSolution.addFirst(word.charAt(word.length() - 1 - i));
-        }
-        return yourSolution.toString().equals(solution);
+
+        return -1; // Value not found
     }
 
-    public static boolean testIndexOf() {
-        boolean result = true;
-        String [] testWords = {"Hello_world", "JavA", "dictionary", "lexicographic"};
-        List yourSolution = new List();
-        for (int i = 0; i < testWords.length; i++) {
-            String w = testWords[i];
-            for (int j = 0; j < w.length(); j++) {
-                yourSolution.addFirst(w.charAt(w.length() - 1 - j));                
-            }
-            boolean res = true;
-            for (int j = 0; j < w.length(); j++) {
-                boolean temp = testIndexOfCase(yourSolution,w,w.charAt(j));
-                res = res && temp;
-                if (!temp){
-                    System.out.println("Word: " + w + ", Char: " + w.charAt(j));
-                    System.out.println("Expected: " + w.indexOf(w.charAt(j)));
-                    System.out.println("Actual: " + yourSolution.indexOf(w.charAt(j)));
-                }
-                
-            }
-            result = result && res;
+    /**
+     * If the given character exists in one of the CharData objects in this list,
+     * increments its counter. Otherwise, adds a new CharData object with the
+     * given chr to the beginning of this list.
+     */
+    public void update(char chr) {
+        int index = indexOf(chr);
+
+        if (index == -1) {
+            addFirst(chr);
+        } else {
+            get(index).count++;
         }
-        if (!result){
-            System.out.println("IndexOf Test failed");
-        }
-        return result;
-    }
-    private static boolean testIndexOfCase (List yourSolution, String sol, char ch) {
-        return sol.indexOf(ch) == yourSolution.indexOf(ch);
     }
 
-    public static boolean testGet() {
-        boolean result = true;
-        String [] testWords = {"apple", "banana", "orange", "grape", "kiwi"};
-        List yourSolution = new List();
-        for (int i = 0; i < testWords.length; i++) {
-            String w = testWords[i];
-            for (int j = 0; j < w.length(); j++) {
-                yourSolution.addFirst(w.charAt(w.length() - 1 - j));                
-            }
-            boolean res = true;
-            for (int j = 0; j < w.length(); j++) {
-                boolean temp = testGetCase(yourSolution, w, j);
-                res = res && temp;
-                if (!temp){
-                    System.out.println("Word: " + w + ", Index: " + j);
-                    System.out.println("Expected: " + w.charAt(j));
-                    System.out.println("Actual: " + yourSolution.get(j).chr);
-                }
-            }
-            result = result && res;
-            
+    /**
+     * GIVE If the given character exists in one of the CharData objects
+     * in this list, removes this CharData object from the list and returns
+     * true. Otherwise, returns false.
+     */
+    public boolean remove(char chr) {
+        // Using two pointers: prev is one step behind current
+        Node prev = null;
+        Node current = first;
+        while (current != null && current.cp.chr != chr) {
+            prev = current;
+            current = current.next;
         }
-        if (!result){
-            System.out.println("Get Test failed");
+        if (current == null) { // Value not found
+            return false;
         }
-        return result;
-    }
-    private static boolean testGetCase (List yourSolution, String sol, int index) {
-        return yourSolution.get(index).equals(sol.charAt(index));
-    }
 
-
-    public static boolean testUpdate () {
-        boolean result = true;
-        String [] testWords = {"commitee_","Hello_World", "Java_", "linked_lists_are_fun", "lexicographic_order"};
-        for (int i = 0; i < testWords.length; i++) {
-            List yourSolution = new List();
-            String w = testWords[i];
-
-            boolean res = true;
-            for (int j = 0; j < w.length(); j++) {
-                boolean temp = testUpdateCase(yourSolution, w, j);
-                res = res && temp;
-                if (!temp){
-                    System.out.println("Word: " + w + ", Index: " + j);
-                    System.out.println("Expected: " + w.charAt(j));
-                    System.out.println("Actual: " + yourSolution.get(j).chr);
-                }
-            }
-            result = result && res;
+        // Remove the element.
+        if (prev == null) { // It is the first element
+            first = first.next;
+        } else {
+            prev.next = current.next;
         }
-        if (!result){
-            System.out.println("Update Test failed");
-        }
-        return result;
-    }
 
-    private static boolean testUpdateCase (List yourSolution, String sol, int index) {
-        char c = sol.charAt(index);
-        int count = countCharUpToIndex(sol,c,index);
-        yourSolution.update(c);
-        for (int i = 0; i < yourSolution.getSize(); i++) {
-            if (yourSolution.get(i).equals(c)) {
-                return yourSolution.get(i).count == count + 1;
-            }
-        }
-        return false;
-        
-    }
-
-    private static int countCharUpToIndex (String s, char c, int index) {
-        int count = 0;
-        for (int i = 0; i < index; i++) {
-            if (s.charAt(i) == c) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    public static boolean testRemove() {
-        boolean result = true;
-        String [] testWords = {"commitee_","Hello_World", "Java_", "linked_lists_are_fun", "lexicographic_order"};
-        char [][] removeChars = {
-            {'m','e','_','y'},
-            {'H','l','_','r'},
-            {'a','v','_', 'J'},
-            {'l','i','_','r'},
-            {'o','r','_','g'},
-        };
-
-        
-        for (int i = 0; i < testWords.length; i++) {
-            List yourSolution = new List();
-            String w = testWords[i];
-            for (int j = 0; j < w.length(); j++) {
-                yourSolution.addFirst(w.charAt(w.length() - 1 - j));                
-            }
-            boolean res = testRemoveCase(yourSolution, w, removeChars[i]);
-            if (!res){
-                System.out.println("Word: " + w + ", chars attempted to remove: " + Arrays.toString(removeChars[i]));
-                System.out.println("Actual: " + yourSolution.toString());
-            }
-            result = result && res;   
-        }
-        if (!result){
-            System.out.println("Remove Test failed");
-        }
-        return result;
-    }
-
-    private static boolean testRemoveCase (List yourSolution, String sol, char [] removeChars) {
-        boolean result = true;
-        for (int i = 0; i < removeChars.length; i++) {
-            char c = removeChars[i];
-            int size = yourSolution.getSize();
-            boolean removeResult = yourSolution.remove(c);
-            if (removeResult) {
-                result = result && (size - 1 == yourSolution.getSize());
-            } else {
-                result = result && (size == yourSolution.getSize());
-            }
-        }
+        size--;
         return true;
     }
-    
 
+    /**
+     * Returns the CharData object at the specified index in this list.
+     * If the index is negative or is greater than the size of this list,
+     * throws an IndexOutOfBoundsException.
+     */
+    public CharData get(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        Node current = first;
+        for (int i = 0; i < index; i++) {
+            current = current.next;
+        }
+
+        return current.cp;
+    }
+
+    /**
+     * Returns an array of CharData objects, containing all the CharData objects in this list.
+     */
+    public CharData[] toArray() {
+        CharData[] arr = new CharData[size];
+        Node current = first;
+        int i = 0;
+        while (current != null) {
+            arr[i++] = current.cp;
+            current = current.next;
+        }
+        return arr;
+    }
+
+    /**
+     * Returns an iterator over the elements in this list, starting at the given index.
+     */
+    public ListIterator listIterator(int index) {
+        // If the list is empty, there is nothing to iterate
+        if (size == 0) return null;
+        // Gets the element in position index of this list
+        Node current = first;
+        int i = 0;
+        while (i < index) {
+            current = current.next;
+            i++;
+        }
+        // Returns an iterator that starts in that element
+        return new ListIterator(current);
+    }
 }
