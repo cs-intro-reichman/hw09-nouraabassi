@@ -4,7 +4,6 @@ public class LanguageModel {
     HashMap<String, List> CharDataMap;
  int windowLength;
     private Random randomGenerator;
-
     public LanguageModel(int windowLength, int seed) {
         this.windowLength = windowLength;
         randomGenerator = new Random(seed);
