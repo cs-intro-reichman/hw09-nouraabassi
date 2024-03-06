@@ -1,7 +1,6 @@
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-
 public class LanguageModelTester {
         public static void main(String[] args) {
         String methodName = args[0];
